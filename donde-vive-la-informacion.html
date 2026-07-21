@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Dónde vive la información?</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Space+Mono:wght@400;700&family=Karla:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --abismo:#06192B;
+  --oceano:#0E3050;
+  --oceano2:#164468;
+  --cable:#3FE0C8;
+  --senal:#FFB13D;
+  --coral:#FF6B5A;
+  --arena:#EFE6D2;
+  --gris:#8FB0C7;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--abismo);color:var(--arena);
+  font-family:'Karla',system-ui,sans-serif;line-height:1.55;
+  background-image:radial-gradient(ellipse at 50% -10%, #12395F 0%, transparent 60%);
+}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px 80px}
+header{padding:56px 0 28px;text-align:center}
+.eyebrow{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cable)}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.2rem,7vw,4rem);line-height:1;margin:.3em 0 .2em}
+h1 em{font-style:normal;color:var(--senal)}
+.sub{color:var(--gris);max-width:52ch;margin:0 auto}
+nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:32px 0 8px}
+nav button{
+  font-family:'Space Mono',monospace;font-size:.78rem;letter-spacing:.05em;
+  background:transparent;color:var(--gris);border:1px solid #24557E;border-radius:999px;
+  padding:9px 16px;cursor:pointer;transition:.15s}
+nav button:hover{color:var(--arena);border-color:var(--cable)}
+nav button[aria-selected="true"]{background:var(--cable);color:var(--abismo);border-color:var(--cable);font-weight:700}
+nav button:focus-visible,.btn:focus-visible,.opt:focus-visible{outline:3px solid var(--senal);outline-offset:2px}
+section[hidden]{display:none}
+.card{background:linear-gradient(180deg,#0F2F4E,#0B2440);border:1px solid #1E4A70;border-radius:18px;padding:24px;margin-top:20px}
+h2{font-family:'Bricolage Grotesque',sans-serif;font-size:1.6rem;margin:.2em 0 .4em}
+h3{font-family:'Bricolage Grotesque',sans-serif;font-size:1.1rem;margin:1.2em 0 .3em}
+p{margin:.5em 0}
+.btn{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1rem;background:var(--senal);color:#2A1500;border:0;border-radius:12px;padding:12px 22px;cursor:pointer}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;color:var(--cable);border:1px solid var(--cable)}
+.sites{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.sites button{font-family:'Space Mono',monospace;font-size:.8rem;background:#0A2138;color:var(--arena);border:1px solid #24557E;border-radius:10px;padding:10px 14px;cursor:pointer}
+.sites button[aria-pressed="true"]{border-color:var(--senal);color:var(--senal)}
+svg{width:100%;height:auto;display:block}
+.readout{display:flex;flex-wrap:wrap;gap:22px;font-family:'Space Mono',monospace;font-size:.85rem;margin-top:14px;border-top:1px dashed #24557E;padding-top:14px}
+.readout b{display:block;color:var(--cable);font-size:1.5rem;font-weight:700}
+.readout span{color:var(--gris);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase}
+.bar{height:12px;background:#0A2138;border-radius:99px;overflow:hidden;margin-top:12px;border:1px solid #24557E}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cable),var(--senal))}
+.status{font-family:'Space Mono',monospace;font-size:.8rem;color:var(--senal);min-height:1.4em;margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.item{background:#0A2138;border:1px solid #24557E;border-radius:14px;padding:14px;font-size:.92rem}
+.zones{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.zone{border:2px dashed #24557E;border-radius:14px;padding:14px;min-height:120px}
+.zone h4{font-family:'Space Mono',monospace;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;margin:0 0 8px;color:var(--cable)}
+.zone.srv h4{color:var(--coral)}
+.chip{display:inline-block;background:#123A5D;border:1px solid #24557E;border-radius:999px;padding:6px 12px;margin:4px 4px 0 0;font-size:.85rem;cursor:pointer}
+.chip.ok{border-color:var(--cable);color:var(--cable);cursor:default}
+.chip.bad{border-color:var(--coral);color:var(--coral)}
+.opt{display:block;width:100%;text-align:left;background:#0A2138;color:var(--arena);border:1px solid #24557E;border-radius:12px;padding:12px 14px;margin-top:8px;cursor:pointer;font:inherit}
+.opt:hover{border-color:var(--cable)}
+.opt.correcta{border-color:var(--cable);background:#0D3B3A}
+.opt.incorrecta{border-color:var(--coral);background:#3A1512}
+.fb{margin-top:10px;font-size:.92rem;color:var(--gris);min-height:1.4em}
+.progreso{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--gris);letter-spacing:.1em}
+dl dt{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;color:var(--senal);margin-top:14px}
+dl dd{margin:2px 0 0;color:var(--arena)}
+footer{text-align:center;color:var(--gris);font-size:.8rem;margin-top:40px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+@media(max-width:600px){.zones{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Etapa 2 · Pensamiento Computacional</div>
+  <h1>¿Dónde <em>vive</em> la información?</h1>
+  <p class="sub">Cuando aparece “Cargando…”, algo está viajando. Vamos a seguirle el rastro: por cables, antenas y computadoras que están en algún lugar real del planeta.</p>
+  <nav role="tablist">
+    <button role="tab" aria-selected="true" data-t="viaje">1 · El viaje del pedido</button>
+    <button role="tab" aria-selected="false" data-t="roles">2 · ¿Cliente o servidor?</button>
+    <button role="tab" aria-selected="false" data-t="tesoro">3 · Búsqueda del tesoro</button>
+    <button role="tab" aria-selected="false" data-t="glosario">4 · Glosario</button>
+  </nav>
+</header>
+
+<!-- ============ 1 ============ -->
+<section id="viaje">
+  <div class="card">
+    <h2>Pedile algo a Internet y mirá cuánto tarda</h2>
+    <p>Elegí un sitio. Tu computadora (el <strong>cliente</strong>) va a mandar el pedido y esperar la respuesta del <strong>servidor</strong>. Fijate dónde está ese servidor.</p>
+    <div class="sites" id="sites"></div>
+
+    <svg viewBox="0 0 900 380" role="img" aria-label="Mapa esquemático con la ruta del pedido">
+      <defs>
+        <linearGradient id="mar" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0E3050"/><stop offset="1" stop-color="#06192B"/>
+        </linearGradient>
+      </defs>
+      <rect width="900" height="380" fill="url(#mar)" rx="14"/>
+      <g stroke="#173F63" stroke-width="1">
+        <path d="M0 90h900M0 170h900M0 250h900M0 330h900"/>
+        <path d="M150 0v380M300 0v380M450 0v380M600 0v380M750 0v380"/>
+      </g>
+      <!-- masas de tierra esquemáticas -->
+      <g fill="#123A5D" stroke="#1E4A70">
+        <path d="M60 60 L210 55 L230 130 L150 200 L70 150 Z"/>
+        <path d="M170 220 L250 205 L275 300 L215 355 L165 300 Z"/>
+        <path d="M400 60 L480 50 L500 110 L430 130 Z"/>
+        <path d="M420 150 L520 145 L540 250 L460 300 L410 220 Z"/>
+        <path d="M560 55 L790 50 L830 150 L700 190 L570 140 Z"/>
+        <path d="M700 250 L810 245 L830 320 L720 330 Z"/>
+      </g>
+      <g id="nodos"></g>
+      <path id="ruta" fill="none" stroke="var(--cable)" stroke-width="3" stroke-dasharray="8 7" opacity="0"/>
+      <circle id="paquete" r="9" fill="var(--senal)" opacity="0"/>
+      <text id="etiqueta" x="450" y="365" text-anchor="middle" fill="#8FB0C7" font-family="Space Mono, monospace" font-size="13"></text>
+    </svg>
+
+    <div class="bar"><i id="barra"></i></div>
+    <div class="status" id="estado">Elegí un sitio y tocá “Pedir la página”.</div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="pedir">Pedir la página</button>
+      <button class="btn ghost" id="f5">Apretar F5 (pedir de nuevo)</button>
+    </div>
+
+    <div class="readout">
+      <div><span>Distancia ida y vuelta</span><b id="rDist">—</b></div>
+      <div><span>Tiempo de espera</span><b id="rMs">—</b></div>
+      <div><span>Servidor en</span><b id="rPais">—</b></div>
+      <div><span>Saltos (routers)</span><b id="rSaltos">—</b></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Para conversar en clase</h3>
+    <div class="grid">
+      <div class="item">¿Por qué el sitio de Ceibal carga más rápido que uno de Japón, si los dos “están en Internet”?</div>
+      <div class="item">Si el servidor de Educaplay está en España, ¿por dónde cruzó tu pedido el océano?</div>
+      <div class="item">Cuando apretás F5, ¿qué viaja de nuevo: la página o el pedido? ¿Las dos cosas?</div>
+      <div class="item">Sin conexión, ¿el video “ya está” en el celular o falta algo? ¿Qué falta exactamente?</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="roles" hidden>
+  <div class="card">
+    <h2>¿Quién pide y quién entrega?</h2>
+    <p>Tocá cada tarjeta y mandala a su lugar. El <strong>cliente</strong> pide; el <strong>servidor</strong> guarda y entrega.</p>
+    <div id="pool"></div>
+    <div class="zones">
+      <div class="zone" id="zCliente"><h4>Cliente · pide</h4><div class="drop"></div></div>
+      <div class="zone srv" id="zServidor"><h4>Servidor · entrega</h4><div class="drop"></div></div>
+    </div>
+    <div class="fb" id="fbRoles"></div>
+    <button class="btn ghost" id="resetRoles" style="margin-top:12px">Empezar de nuevo</button>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="tesoro" hidden>
+  <div class="card">
+    <div class="progreso" id="prog"></div>
+    <h2 id="preg"></h2>
+    <div id="opts"></div>
+    <div class="fb" id="fbQ"></div>
+    <button class="btn" id="sig" style="margin-top:14px;display:none">Siguiente</button>
+  </div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="glosario" hidden>
+  <div class="card">
+    <h2>Las palabras del viaje</h2>
+    <dl>
+      <dt>Cliente</dt><dd>El equipo que pide: tu ceibalita, el celular, la tele.</dd>
+      <dt>Servidor</dt><dd>Una computadora encendida siempre, que guarda información y la entrega cuando alguien la pide.</dd>
+      <dt>Centro de datos</dt><dd>Un edificio lleno de servidores, con refrigeración y electricidad de respaldo. Antel tiene uno en Pando, Canelones.</dd>
+      <dt>Cable submarino</dt><dd>Cables de fibra óptica apoyados en el fondo del mar. Uruguay se conecta al mundo por varios de ellos; casi todo el tráfico internacional pasa por ahí, no por satélite.</dd>
+      <dt>Router</dt><dd>Aparato que decide por dónde sigue cada paquete. Un pedido pasa por muchos antes de llegar.</dd>
+      <dt>Latencia</dt><dd>El tiempo que tarda el pedido en ir y volver. Más distancia y más saltos, más espera.</dd>
+      <dt>Traceroute</dt><dd>Herramienta que muestra la lista de routers por los que pasó tu pedido, con el país de cada uno.</dd>
+      <dt>“La nube”</dt><dd>Un apodo. No hay nada en el aire: son servidores de alguien, en algún país, con una dirección postal.</dd>
+    </dl>
+  </div>
+</section>
+
+<footer>Hecho para Plan Ceibal · Etapa 2 · Los tiempos son aproximados y sirven para comparar, no para medir.</footer>
+</div>
+
+<script>
+/* ---------- navegación ---------- */
+const tabs=[...document.querySelectorAll('nav button')];
+tabs.forEach(b=>b.onclick=()=>{
+  tabs.forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section').forEach(s=>s.hidden=(s.id!==b.dataset.t));
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* ---------- 1. viaje ---------- */
+const ORIGEN={x:225,y:295,n:'Montevideo'};
+const SITIOS=[
+ {id:'ceibal',n:'ceibal.edu.uy',pais:'Uruguay',x:245,y:280,km:40,saltos:4},
+ {id:'nacional',n:'nacional.uy',pais:'Uruguay',x:250,y:305,km:60,saltos:5},
+ {id:'gub',n:'gub.uy',pais:'Uruguay',x:230,y:320,km:30,saltos:4},
+ {id:'educaplay',n:'educaplay.com',pais:'España',x:445,y:95,km:20600,saltos:14},
+ {id:'youtube',n:'youtube.com',pais:'Estados Unidos',x:145,y:110,km:16400,saltos:12},
+ {id:'anime',n:'un sitio de Japón',pais:'Japón',x:790,y:110,km:36000,saltos:19}
+];
+let actual=SITIOS[0];
+const cont=document.getElementById('sites');
+SITIOS.forEach(s=>{
+  const b=document.createElement('button');
+  b.textContent=s.n;b.setAttribute('aria-pressed',s===actual);
+  b.onclick=()=>{actual=s;[...cont.children].forEach((c,i)=>c.setAttribute('aria-pressed',SITIOS[i]===s));dibujar();};
+  cont.appendChild(b);
+});
+
+const svgNS='http://www.w3.org/2000/svg';
+const nodos=document.getElementById('nodos'),ruta=document.getElementById('ruta'),
+      paquete=document.getElementById('paquete'),etiqueta=document.getElementById('etiqueta');
+
+function dibujar(){
+  nodos.innerHTML='';
+  const marca=(x,y,txt,color)=>{
+    const c=document.createElementNS(svgNS,'circle');
+    c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',7);
+    c.setAttribute('fill',color);nodos.appendChild(c);
+    const t=document.createElementNS(svgNS,'text');
+    t.setAttribute('x',x);t.setAttribute('y',y-14);t.setAttribute('text-anchor','middle');
+    t.setAttribute('fill','#EFE6D2');t.setAttribute('font-size','13');
+    t.setAttribute('font-family','Space Mono, monospace');t.textContent=txt;
+    nodos.appendChild(t);
+  };
+  marca(ORIGEN.x,ORIGEN.y,'vos',getCSS('--senal'));
+  marca(actual.x,actual.y,actual.pais,getCSS('--coral'));
+  const mx=(ORIGEN.x+actual.x)/2, my=Math.min(ORIGEN.y,actual.y)-70;
+  ruta.setAttribute('d',`M${ORIGEN.x} ${ORIGEN.y} Q${mx} ${my} ${actual.x} ${actual.y}`);
+  ruta.setAttribute('opacity','.5');
+  paquete.setAttribute('opacity','0');
+  etiqueta.textContent=`${ORIGEN.n} → ${actual.pais}`;
+  document.getElementById('rDist').textContent='—';
+  document.getElementById('rMs').textContent='—';
+  document.getElementById('rPais').textContent=actual.pais;
+  document.getElementById('rSaltos').textContent='—';
+  document.getElementById('barra').style.width='0';
+  document.getElementById('estado').textContent='Listo para pedir.';
+}
+function getCSS(v){return getComputedStyle(document.body).getPropertyValue(v).trim()}
+
+let corriendo=false;
+function pedir(){
+  if(corriendo)return; corriendo=true;
+  const ms=Math.round(actual.km/100+actual.saltos*7+20);
+  const dur=Math.max(700,ms*6);
+  const largo=ruta.getTotalLength();
+  const barra=document.getElementById('barra'),est=document.getElementById('estado');
+  paquete.setAttribute('opacity','1');
+  est.textContent='Pedido en viaje… (ida)';
+  const t0=performance.now();
+  function frame(t){
+    const p=Math.min(1,(t-t0)/dur);
+    // ida 0→1, vuelta 1→0
+    const f=p<.5? p*2 : (1-p)*2;
+    const pt=ruta.getPointAtLength(f*largo);
+    paquete.setAttribute('cx',pt.x);paquete.setAttribute('cy',pt.y);
+    if(p>=.5&&est.dataset.v!=='1'){est.dataset.v='1';est.textContent='El servidor respondió. Volviendo con los datos… (Cargando…)';paquete.setAttribute('fill',getCSS('--cable'));}
+    barra.style.width=(p*100)+'%';
+    if(p<1)requestAnimationFrame(frame);
+    else{
+      est.dataset.v='0';paquete.setAttribute('fill',getCSS('--senal'));
+      est.textContent='¡Página cargada! Esa espera fue el viaje.';
+      document.getElementById('rDist').textContent=(actual.km*2).toLocaleString('es-UY')+' km';
+      document.getElementById('rMs').textContent=ms+' ms';
+      document.getElementById('rSaltos').textContent=actual.saltos;
+      corriendo=false;
+    }
+  }
+  requestAnimationFrame(frame);
+}
+document.getElementById('pedir').onclick=pedir;
+document.getElementById('f5').onclick=pedir;
+dibujar();
+
+/* ---------- 2. roles ---------- */
+const TARJETAS=[
+ {t:'Tu ceibalita pidiendo una página',r:'c'},
+ {t:'La computadora de YouTube que guarda el video',r:'s'},
+ {t:'El celular abriendo CREA',r:'c'},
+ {t:'Un equipo del centro de datos de Antel en Pando',r:'s'},
+ {t:'La tele del living mirando una serie',r:'c'},
+ {t:'La máquina que guarda el juego de Educaplay',r:'s'}
+];
+function armarRoles(){
+  const pool=document.getElementById('pool');pool.innerHTML='';
+  document.querySelectorAll('.zone .drop').forEach(d=>d.innerHTML='');
+  document.getElementById('fbRoles').textContent='';
+  TARJETAS.slice().sort(()=>Math.random()-.5).forEach(o=>{
+    const c=document.createElement('button');c.className='chip';c.textContent=o.t;
+    c.onclick=()=>elegir(c,o);pool.appendChild(c);
+  });
+}
+function elegir(chip,o){
+  if(chip.classList.contains('ok'))return;
+  const fb=document.getElementById('fbRoles');
+  const destino=o.r==='c'?'zCliente':'zServidor';
+  // primer clic manda a cliente, segundo a servidor
+  const eleccion=chip.dataset.try==='1'?'s':'c';
+  if(eleccion===o.r){
+    chip.classList.remove('bad');chip.classList.add('ok');
+    document.querySelector('#'+destino+' .drop').appendChild(chip);
+    fb.textContent='Correcto. '+(o.r==='c'?'Pide información.':'La guarda y la entrega.');
+    if(document.querySelectorAll('.chip.ok').length===TARJETAS.length)
+      fb.textContent='¡Completo! Toda la web funciona con este par: alguien pide, alguien entrega.';
+  }else{
+    chip.classList.add('bad');chip.dataset.try='1';
+    fb.textContent='Casi. Volvé a tocarla para mandarla al otro lado.';
+  }
+}
+document.getElementById('resetRoles').onclick=armarRoles;
+armarRoles();
+
+/* ---------- 3. quiz ---------- */
+const Q=[
+ {p:'Aparece “Cargando…” en un juego. ¿Qué está pasando?',
+  o:['El juego se está creando en ese momento','Los datos están viajando desde un servidor hasta tu equipo','La pantalla se está limpiando'],c:1,
+  e:'El juego ya existe, guardado en un servidor. Lo que tarda es el viaje de los datos.'},
+ {p:'nacional.uy tiene contenido uruguayo. ¿Su servidor tiene que estar en Uruguay?',
+  o:['Sí, obligatoriamente','No: puede estar en cualquier país','Sí, porque el dominio termina en .uy'],c:1,
+  e:'El dominio no dice dónde está la máquina. Muchos sitios uruguayos se alojan en el exterior.'},
+ {p:'¿Por dónde viaja la mayor parte del tráfico internacional de Uruguay?',
+  o:['Por satélites','Por cables de fibra óptica en el fondo del mar','Por las antenas de celular'],c:1,
+  e:'Los cables submarinos llevan casi todo. Las antenas te conectan solo al primer tramo.'},
+ {p:'Un video desde un servidor en Japón tarda más que uno desde Montevideo porque…',
+  o:['El video pesa más','La información recorre más distancia y más routers','En Japón es de noche'],c:1,
+  e:'Más kilómetros y más saltos, más latencia. Nada viaja instantáneo.'},
+ {p:'¿Qué es un centro de datos?',
+  o:['Un programa que ordena archivos','Un edificio con muchísimos servidores encendidos','Una nube de información en el aire'],c:1,
+  e:'Como el de Antel en Pando: paredes, cables, aire acondicionado y filas de máquinas.'},
+ {p:'Sin conexión, ¿podés ver un video de YouTube que nunca abriste?',
+  o:['Sí, está en el celular','No, hay que pedirlo al servidor y sin red no llega','Sí, si el celular tiene batería'],c:1,
+  e:'Sin red no hay pedido posible: el video sigue en el servidor, no en tu equipo.'}
+];
+let i=0,aciertos=0;
+function pintarQ(){
+  const q=Q[i];
+  document.getElementById('prog').textContent=`PREGUNTA ${i+1} DE ${Q.length}`;
+  document.getElementById('preg').textContent=q.p;
+  const box=document.getElementById('opts');box.innerHTML='';
+  document.getElementById('fbQ').textContent='';
+  document.getElementById('sig').style.display='none';
+  q.o.forEach((txt,k)=>{
+    const b=document.createElement('button');b.className='opt';b.textContent=txt;
+    b.onclick=()=>{
+      [...box.children].forEach(c=>c.disabled=true);
+      if(k===q.c){b.classList.add('correcta');aciertos++;}
+      else{b.classList.add('incorrecta');box.children[q.c].classList.add('correcta');}
+      document.getElementById('fbQ').textContent=q.e;
+      document.getElementById('sig').style.display='inline-block';
+    };
+    box.appendChild(b);
+  });
+}
+document.getElementById('sig').onclick=()=>{
+  i++;
+  if(i<Q.length)pintarQ();
+  else{
+    document.getElementById('prog').textContent='RESULTADO';
+    document.getElementById('preg').textContent=`${aciertos} de ${Q.length} correctas`;
+    document.getElementById('opts').innerHTML='';
+    document.getElementById('fbQ').textContent='Ahora escribí en el foro: ¿dónde estaba guardado lo que usaste hoy?';
+    const b=document.getElementById('sig');b.textContent='Jugar de nuevo';
+    b.onclick=()=>{i=0;aciertos=0;b.textContent='Siguiente';b.onclick=null;location.reload();};
+  }
+};
+pintarQ();
+</script>
+</body>
+</html>
